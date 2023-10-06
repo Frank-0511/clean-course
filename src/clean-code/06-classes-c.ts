@@ -19,18 +19,17 @@
     }
   }
 
-  interface UserProps extends PersonProps {
+  interface UserProps {
     email: string;
     password: string;
   }
 
-  class User extends Person {
-    public lastAccess: Date;
+  class User {
     public email: string;
+    public lastAccess: Date;
     public password: string;
 
-    constructor({ email, password, name, gender, birthDate }: UserProps) {
-      super({ name, gender, birthDate });
+    constructor({ email, password }: UserProps) {
       this.lastAccess = new Date();
       this.email = email;
       this.password = password;
@@ -41,27 +40,40 @@
     }
   }
 
-  interface UserSettingsProps extends UserProps {
+  interface SettingsProps {
     workingDirectory: string;
     lastOpenFolder: string;
   }
 
-  class UserSettings extends User {
+  class Settings {
     public workingDirectory: string;
     public lastOpenFolder: string;
 
+    constructor({ workingDirectory, lastOpenFolder }: SettingsProps) {
+      this.workingDirectory = workingDirectory;
+      this.lastOpenFolder = lastOpenFolder;
+    }
+  }
+
+  interface UserSettingsProps extends UserProps, PersonProps, SettingsProps {}
+
+  class UserSettings {
+    public person: Person;
+    public user: User;
+    public settings: Settings;
+
     constructor({
-      workingDirectory,
-      lastOpenFolder,
-      email,
-      password,
       name,
       gender,
       birthDate,
+      email,
+      password,
+      workingDirectory,
+      lastOpenFolder,
     }: UserSettingsProps) {
-      super({ email, password, name, gender, birthDate });
-      this.workingDirectory = workingDirectory;
-      this.lastOpenFolder = lastOpenFolder;
+      this.person = new Person({ name, gender, birthDate });
+      this.user = new User({ email, password });
+      this.settings = new Settings({ workingDirectory, lastOpenFolder });
     }
   }
 
@@ -84,5 +96,5 @@
   });
 
   console.log(userSettings);
-  console.log(userSettings.checkCredentials());
+  console.log(userSettings.user.checkCredentials());
 })();
